@@ -1,0 +1,1 @@
+curl -Lv http://argeu.cluster.com/echo
