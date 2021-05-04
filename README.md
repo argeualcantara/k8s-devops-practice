@@ -42,4 +42,13 @@ mk create secret generic -n metallb-system memberlist --from-literal=secretkey="
 
 https://kubernetes.github.io/ingress-nginx/deploy/
 
-## Deploy echoserver
+## Enable metrics server
+
+### Metrics server for Minikube
+
+minikube addons enable metrics-server
+
+### Metrics on EKS or other clusters
+
+https://github.com/kubernetes-sigs/metrics-server#installation
+
