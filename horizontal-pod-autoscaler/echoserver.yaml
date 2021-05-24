@@ -6,33 +6,30 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consumer
+  name: echoserver
   namespace: hpa-example
   labels:
-    app: consumer
+    app: echoserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consumer
+      app: echoserver
   template:
     metadata:
       labels:
-        app: consumer
-      annotations:
-         prometheus.io/scrape: "true"
-         prometheus.io/port: "8080"
+        app: echoserver
     spec:
       containers:
-      - image: gcr.io/kubernetes-e2e-test-images/resource-consumer:1.5
+      - image: gcr.io/google_containers/echoserver:1.0
         imagePullPolicy: Always
-        name: consumer
+        name: echoserver
         resources:
           limits:
-            cpu: "700m"
+            cpu: "500m"
             memory: "500Mi"
           requests:
-            cpu: "500m"
+            cpu: "100m"
             memory: "250Mi"
         ports:
         - containerPort: 8080
@@ -40,7 +37,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: consumer
+  name: echoserver
   namespace: hpa-example
 spec:
   ports:
@@ -48,12 +45,12 @@ spec:
     targetPort: 8080
     protocol: TCP
   selector:
-    app: consumer
+    app: echoserver
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: consumer-mem
+  name: echoserver
   namespace: hpa-example
   annotations:
     kubernetes.io/ingress.class: "nginx"
@@ -62,30 +59,10 @@ spec:
   - host: argeu.cluster.com
     http:
       paths:
-      - path: /ConsumeMem
+      - path: /echo
         pathType: Prefix
         backend:
           service:
-            name: consumer
-            port:
-              number: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: consumer-cpu
-  namespace: hpa-example
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-spec:
-  rules:
-  - host: argeu.cluster.com
-    http:
-      paths:
-      - path: /ConsumeCPU
-        pathType: Prefix
-        backend:
-          service:
-            name: consumer
+            name: echoserver
             port:
               number: 80
